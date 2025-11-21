@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import { Link } from "react-router-dom";
@@ -11,7 +11,7 @@ function Notes({ notes }) {
   const [text, setText] = useState("");
   const [filteredNotes, setFilteredNotes] = useState(notes);
 
-  const handleSearch = (e) => {
+  const handleSearch = () => {
     setFilteredNotes(
       notes.filter((note) => {
         if (note.title.toLowerCase().match(text.toLocaleLowerCase())) {
@@ -20,23 +20,35 @@ function Notes({ notes }) {
       })
     );
   };
-  useState(handleSearch, [text]);
+  useEffect(handleSearch, [text]);
   return (
     <section>
       <header className="notes__header">
         {!showSearch && <h2>My Notes</h2>}
-        {showSearch && <input type="text" value={text} autoFocus placeholder="Keyword..." onChange={(e) => {
-            setText(e.target.value);
-            handleSearch();
-          }}/>}
+        {showSearch && (
+          <input
+            type="text"
+            value={text}
+            autoFocus
+            placeholder="Keyword..."
+            onChange={(e) => {
+              setText(e.target.value);
+              console.log(e.target.value);
+              handleSearch();
+            }}
+          />
+        )}
         <button
           className="btn"
           onClick={() => setShowSearch((prevState) => !prevState)}
         >
-          {showSearch ? <MdClose/> : <CiSearch />}
+          {showSearch ? <MdClose /> : <CiSearch />}
         </button>
       </header>
       <div className="notes__container">
+        {filteredNotes.length === 0 && (
+          <p className="empty__notes">No notes found</p>
+        )}
         {filteredNotes.map((note) => (
           <NoteItem key={note.id} note={note} />
         ))}
