@@ -9,11 +9,10 @@ import { useNavigate } from "react-router-dom";
 function EditNote({notes, setNotes}) {
   const {id} = useParams();
   const note = notes.find(note => note.id === id);
-  const [title, setTitle] = useState(note.title);
-  const [details, setDetails] = useState(note.details);
+  const [title, setTitle] = useState(note ? note.title : "");
+  const [details, setDetails] = useState(note ? note.details: "");
   const date = useCreateDate();
   const navigate = useNavigate();
-  console.log(note);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -26,12 +25,18 @@ function EditNote({notes, setNotes}) {
     }
   }
 
+  const handleDelete = () => {
+    const newNotes = notes.filter(n => n.id !== id);
+    setNotes(newNotes);
+    navigate("/");
+  }
+
   return (
     <section>
       <header className="create-note__header">
         <Link to="/" className="btn"><IoIosArrowBack/></Link>
         <button className="btn lg primary" onClick={handleSubmit}> Save</button>
-        <button className="btn danger"> <RiDeleteBin6Line/></button>
+        <button className="btn danger" onClick={handleDelete}> <RiDeleteBin6Line/></button>
       </header>
       <form className="create-note__form">
         <input type="text" autoFocus placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)}/>
